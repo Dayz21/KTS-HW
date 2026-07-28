@@ -1,5 +1,7 @@
 import * as React from 'react';
 
-const App: React.FC = () => <div />;
+import { PreviewPage } from 'pages/PreviewPage';
+
+const App: React.FC = () => <PreviewPage />;
 
 export default App;
