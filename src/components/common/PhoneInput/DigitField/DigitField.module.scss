@@ -1,0 +1,47 @@
+@import "styles/mixins";
+@import "styles/theme";
+
+.root {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid $input-border-color;
+  border-radius: 8px;
+  background-color: $input-bg-color;
+  text-align: center;
+  font: inherit;
+  color: inherit;
+  font-size: 14px;
+  @include animate(border-color);
+
+  &:focus-visible,
+  &:not(:disabled):hover {
+    border-color: $input-active-color;
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  &::placeholder {
+    color: inherit;
+    opacity: 0.5;
+  }
+
+  &:active::placeholder {
+    color: inherit;
+    opacity: 0.25;
+  }
+
+  &.error {
+    border-color: $input-error-color;
+  }
+
+  &.success {
+    border-color: $input-success-color;
+  }
+}

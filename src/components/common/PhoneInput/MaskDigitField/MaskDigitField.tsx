@@ -1,0 +1,127 @@
+import React from 'react';
+
+import { DigitField } from '../DigitField';
+import { PhoneInputStatus } from '../types';
+import { getMaskDigitCount, parseMaskParts } from '../utils';
+
+import s from './MaskDigitField.module.scss';
+import { MaskDigitFieldProps } from './types';
+
+export const MaskDigitField: React.FC<MaskDigitFieldProps> = ({
+  mask,
+  digits,
+  onDigitsChange,
+  disabled = false,
+  status = PhoneInputStatus.DEFAULT,
+}) => {
+  const digitCount = getMaskDigitCount(mask);
+  const parts = React.useMemo(() => parseMaskParts(mask), [mask]);
+
+  const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
+
+  const updateDigits = (nextDigits: string[]) => {
+    onDigitsChange(nextDigits);
+  };
+
+  const focusDigit = (index: number) => {
+    inputRefs.current[index]?.focus();
+  };
+
+  const handleDigitInput = (index: number, digit: string) => {
+    const nextDigits = [...digits];
+
+    nextDigits[index] = digit;
+    updateDigits(nextDigits);
+
+    if (digit && index < digitCount - 1) {
+      focusDigit(index + 1);
+    }
+  };
+
+  const handlePasteDigits = (index: number, pastedDigits: string) => {
+    const nextDigits = [...digits];
+
+    for (let offset = 0; offset < pastedDigits.length && index + offset < digitCount; offset += 1) {
+      nextDigits[index + offset] = pastedDigits[offset];
+    }
+
+    updateDigits(nextDigits);
+    focusDigit(Math.min(index + pastedDigits.length, digitCount - 1));
+  };
+
+  const handleKeyDown = (index: number, event: React.KeyboardEvent<HTMLInputElement>) => {
+    switch (event.key) {
+      case 'Backspace':
+        event.preventDefault();
+
+        if (digits[index]) {
+          const nextDigits = [...digits];
+
+          nextDigits[index] = '';
+          updateDigits(nextDigits);
+        } else if (index > 0) {
+          focusDigit(index - 1);
+          const nextDigits = [...digits];
+
+          nextDigits[index - 1] = '';
+          updateDigits(nextDigits);
+        }
+
+        break;
+      case 'ArrowLeft':
+        if (index > 0) {
+          event.preventDefault();
+          focusDigit(index - 1);
+        }
+
+        break;
+      case 'ArrowRight':
+        if (index < digitCount - 1) {
+          event.preventDefault();
+          focusDigit(index + 1);
+        }
+
+        break;
+
+      case 'Delete': {
+        event.preventDefault();
+
+        const nextDigits = [...digits];
+
+        nextDigits[index] = '';
+        updateDigits(nextDigits);
+        break;
+      }
+    }
+  };
+
+  return (
+    <div className={s.root}>
+      {parts.map((part, partIndex) => {
+        if (part.type === 'static') {
+          return (
+            <span key={`static-${partIndex}`} className={s.separator}>
+              {part.value}
+            </span>
+          );
+        }
+
+        return (
+          <DigitField
+            key={`digit-${part.index}`}
+            ref={(element) => {
+              inputRefs.current[part.index] = element;
+            }}
+            disabled={disabled}
+            value={digits[part.index]}
+            ariaLabel={`Цифра ${part.index + 1}`}
+            onChange={(digit) => handleDigitInput(part.index, digit)}
+            onPasteDigits={(pastedDigits) => handlePasteDigits(part.index, pastedDigits)}
+            onKeyDown={(event) => handleKeyDown(part.index, event)}
+            status={status}
+          />
+        );
+      })}
+    </div>
+  );
+};
