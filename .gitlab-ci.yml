@@ -1,0 +1,13 @@
+include:
+  project: mnt/ci
+  file: front/ci.yaml
+  ref: ${MNT_CI_REF}
+
+variables:
+  NODE_IMAGE: node:20
+  DEV_BASE_DOMAIN: special-homework-front.ktsdev.ru
+  DEV_API_DOMAIN: special-homework-front.ktsdev.ru
+  PROD_DOMAIN: special-homework-front.ru-prod2.kts.studio
+  BILLY_PROJECT: special-homework
+  SENTRY_DSN: 
+  SENTRY_PROJECT: special-homework-front
