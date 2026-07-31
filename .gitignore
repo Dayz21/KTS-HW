@@ -5,6 +5,8 @@ dist/
 storybook-static/
 coverage/
 *.local 
+storybook-static/
+coverage/
 .idea/ 
 .vscode/ 
 .DS_Store 

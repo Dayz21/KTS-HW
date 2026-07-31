@@ -36,6 +36,9 @@ yarn lint           # проверка ESLint
 yarn lint:fix       # автоисправление ESLint
 yarn stylelint      # проверка стилей
 yarn tsc:check      # проверка TypeScript
+yarn test           # запуск Jest-тестов
+yarn test:watch     # тесты в watch-режиме
+yarn storybook      # Storybook на http://localhost:6006
 ```
 
 ---
@@ -129,6 +132,29 @@ type PhoneMask = {
 - CSS Modules — стили компонентов
 - Framer Motion — анимация выпадающего списка
 - Vite — сборка и dev-сервер
+- Jest + React Testing Library — unit- и component-тесты
+- Storybook — визуальная демонстрация компонента
+
+### Тесты
+
+Покрыты MobX-стор и компонент `PhoneInput`:
+
+```bash
+yarn test
+```
+
+Тесты стора: инициализация, выбор маски, смена региона, ввод цифр, синхронизация value.  
+Тесты компонента (RTL): рендер, ввод, смена региона, статусы, disabled, контролируемый режим.
+
+### Storybook
+
+Stories для всех основных состояний компонента:
+
+```bash
+yarn storybook
+```
+
+Доступны варианты: `Default`, `Disabled`, `Success`, `Error`, `WithValue`.
 
 ---
 
