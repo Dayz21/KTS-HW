@@ -160,13 +160,10 @@ export const useListbox = ({
 
   return {
     isOpen,
-    focusedIndex,
     rootRef,
     triggerRef,
     getItemRef,
     toggle,
-    open,
-    close,
     select,
     onTriggerKeyDown,
     onListKeyDown,

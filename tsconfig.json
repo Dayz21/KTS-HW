@@ -27,8 +27,6 @@
     "baseUrl": "./src",
     "paths": {
       "components/*": ["components/*"],
-      "assets/*": ["assets/*"],
-      "config/*": ["config/*"],
       "pages/*": ["pages/*"],
       "store/*": ["store/*"],
       "styles/*": ["styles/*"],
@@ -37,5 +35,5 @@
       "hooks/*": ["hooks/*"]
     }
   },
-  "include": ["src", "tools/fonts", "tools/images"]
+  "include": ["src", "tools/fonts"]
 }

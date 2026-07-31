@@ -30,11 +30,9 @@ export class PhoneInputStore implements ILocalStore {
 
     makeObservable(this, {
       masks: computed,
-      value: computed,
       normalizedValue: computed,
       selectedMask: computed,
       digits: computed,
-      setValue: action.bound,
       syncValue: action.bound,
       changeRegion: action.bound,
       setDigits: action.bound,
@@ -43,10 +41,6 @@ export class PhoneInputStore implements ILocalStore {
 
   get masks(): PhoneMask[] {
     return this._masks;
-  }
-
-  get value(): string {
-    return this._value.value;
   }
 
   get normalizedValue(): string {
@@ -76,10 +70,6 @@ export class PhoneInputStore implements ILocalStore {
 
     return extractMaskDigits(mask.prefix, mask.mask, this.normalizedValue);
   }
-
-  setValue = (value: string): void => {
-    this._emitChange(normalizePhoneInput(this._masks, value));
-  };
 
   syncValue = (value: string): void => {
     const normalized = normalizePhoneInput(this._masks, value);

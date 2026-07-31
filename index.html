@@ -8,13 +8,10 @@
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-    <!--  TODO: change meta data -->
     <title>special-homework-front</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon.png" />
     <meta property="og:description" content="special-homework-front" />
-    <meta property="og:image" content="/static/share.png" />
 
-    <!-- TODO: tune initial theme -->
     <meta name="theme-color" content="#000" />
     <style>
       html,
@@ -24,16 +21,10 @@
       }
     </style>
 
-    <!-- vite-plugin-html injections -->
     {|- INJECT_FONTS_PRELOAD_LINKS |}
     <style>
       {|- INJECT_FONTS_FACES |}
     </style>
-
-    <!-- api-url injections -->
-    <script type="application/javascript">
-      window.API_URL_FROM_TEMPLATE = '__BACKEND_API_URL_TEMPLATE__';
-    </script>
   </head>
   <body>
     <div id="root"></div>

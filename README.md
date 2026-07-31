@@ -144,7 +144,7 @@ special-homework-front/
 │   │   └── useListbox.ts       # Хук для listbox-навигации
 │   ├── pages/
 │   │   └── PreviewPage/        # Демо-страница с примерами
-│   ├── store/                  # Глобальные MobX-сторы
+│   ├── store/                  # useLocalStore, ILocalStore
 │   ├── styles/                 # Глобальные стили
 │   ├── App.tsx
 │   └── main.tsx

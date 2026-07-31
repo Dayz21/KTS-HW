@@ -5,7 +5,6 @@ import { fixActive } from '@kts-specials/mediaproject-utils';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { rootStore } from 'store/globals/root';
 import { initSentry, initEruda } from 'utils/init';
 
 import './styles/global.scss';
@@ -15,8 +14,8 @@ import App from './App';
 const startApp = () => {
   fixActive();
 
-  initEruda(rootStore.appParamsStore.isDev);
-  initSentry(rootStore.appParamsStore);
+  initEruda(import.meta.env.DEV);
+  initSentry();
 
   createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

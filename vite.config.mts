@@ -52,14 +52,8 @@ export default defineConfig(({ mode }) => {
 
   const { INJECT_FONTS_PRELOAD_LINKS, INJECT_FONTS_FACES } = buildFontsInject();
 
-  const proxyPort = process.env.API_PROXY_PORT;
-
-  const proxyTarget = proxyPort
-    ? `https://localhost:${proxyPort}`
-    : 'https://special-homework-front.ktsdev.ru';
-
   return {
-    define: defineEnvVariables(['NODE_ENV', 'API_URL', 'SENTRY_DSN', 'SENTRY_AUTH_TOKEN']),
+    define: defineEnvVariables(['NODE_ENV', 'SENTRY_DSN', 'SENTRY_AUTH_TOKEN']),
     base: '/',
     publicDir: 'static',
     build: {
@@ -69,13 +63,6 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       https: true,
-      proxy: {
-        '/api': {
-          target: proxyTarget,
-          changeOrigin: true,
-          secure: true,
-        },
-      },
     },
     css: {
       modules: {
@@ -107,18 +94,7 @@ export default defineConfig(({ mode }) => {
           },
         },
       }),
-      react({
-        plugins: [
-          [
-            '@swc/plugin-styled-components',
-            {
-              displayName: true,
-              fileName: true,
-              meaninglessFileNames: ['index', 'styles'],
-            },
-          ],
-        ],
-      }),
+      react(),
       svgr({
         svgrOptions: {
           ref: true,

@@ -1,14 +1,12 @@
 import { init } from '@kts-specials/mediaproject-stores';
 
-import { IAppParamsStore } from 'store/globals/appParams/declaration';
-
-export const initSentry = ({ isProd, isDev }: IAppParamsStore) => {
+export const initSentry = () => {
   init(
     {
       dsn: process.env.SENTRY_DSN,
       normalizeDepth: 6,
     },
-    isProd,
-    isDev,
+    import.meta.env.PROD,
+    import.meta.env.DEV,
   );
 };

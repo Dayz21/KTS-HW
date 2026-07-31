@@ -27,7 +27,6 @@ const config: Linter.Config[] = tseslint.config(
       '*.config.mjs',
       '*.config.mts',
       '*-env.d.ts',
-      'tools/images/imagemin.mts',
     ],
   },
 
