@@ -8,6 +8,12 @@ export const TEST_MASKS: PhoneMask[] = [
     mask: '(***) ***-**-**',
   },
   {
+    key: 'kz',
+    name: 'Казахстан',
+    prefix: '+7',
+    mask: '(***) ***-**-**',
+  },
+  {
     key: 'us',
     name: 'США',
     prefix: '+1',

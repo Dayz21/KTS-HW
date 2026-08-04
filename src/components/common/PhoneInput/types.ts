@@ -11,6 +11,8 @@ export enum PhoneInputStatus {
   DEFAULT = 'default',
 }
 
+export type PhoneInputStatusValue = PhoneInputStatus | string;
+
 export type PhoneInputProps = {
   masks: PhoneMask[];
   initialValue?: string;
@@ -19,7 +21,7 @@ export type PhoneInputProps = {
   label?: string;
   className?: string;
   disabled?: boolean;
-  status?: PhoneInputStatus;
+  status?: PhoneInputStatusValue;
   statusText?: string;
 };
 

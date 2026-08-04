@@ -19,6 +19,24 @@ export const findMaskByPrefix = (masks: PhoneMask[], phone: string): PhoneMask |
     .sort((a, b) => b.prefix.length - a.prefix.length)[0];
 };
 
+const resolveMask = (
+  masks: PhoneMask[],
+  lookupValue: string,
+  preferredMaskKey?: string | null,
+): PhoneMask => {
+  if (preferredMaskKey) {
+    const preferred = masks.find(
+      (mask) => mask.key === preferredMaskKey && lookupValue.startsWith(mask.prefix),
+    );
+
+    if (preferred) {
+      return preferred;
+    }
+  }
+
+  return findMaskByPrefix(masks, lookupValue) ?? masks[0];
+};
+
 export const getMaskDigitCount = (mask: string): number => {
   return [...mask].filter((char) => char === MASK_DIGIT_PLACEHOLDER).length;
 };
@@ -118,14 +136,18 @@ export const hasMaskStructure = (prefix: string, value: string): boolean => {
 };
 
 /** Превращает любой номер в значение по маске; незаполненные позиции — *. */
-export const normalizePhoneInput = (masks: PhoneMask[], phone: string): string => {
+export const normalizePhoneInput = (
+  masks: PhoneMask[],
+  phone: string,
+  preferredMaskKey?: string | null,
+): string => {
   if (!phone || masks.length === 0) {
     return '';
   }
 
   const trimmed = phone.trim();
   const lookupValue = trimmed.startsWith('+') ? trimmed : `+${normalizePhoneNumber(trimmed)}`;
-  const mask = findMaskByPrefix(masks, lookupValue) ?? masks[0];
+  const mask = resolveMask(masks, lookupValue, preferredMaskKey);
 
   if (trimmed === mask.prefix) {
     return formatPhoneTemplate(mask.prefix, mask.mask);

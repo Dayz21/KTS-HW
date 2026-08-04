@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import React from 'react';
 
-import { PhoneInputStatus } from '../types';
+import { PhoneInputStatus, PhoneInputStatusValue } from '../types';
 
 import s from './DigitField.module.scss';
 
@@ -12,7 +12,7 @@ type DigitFieldProps = {
   disabled?: boolean;
   ariaLabel?: string;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  status?: PhoneInputStatus;
+  status?: PhoneInputStatusValue;
 };
 
 export const DigitField = React.forwardRef<HTMLInputElement, DigitFieldProps>(
@@ -53,8 +53,8 @@ export const DigitField = React.forwardRef<HTMLInputElement, DigitFieldProps>(
       <input
         ref={ref}
         className={cn(s.root, {
-          [s.error]: status === PhoneInputStatus.ERROR,
-          [s.success]: status === PhoneInputStatus.SUCCESS,
+          [s.error]: status === 'error',
+          [s.success]: status === 'success',
         })}
         type="text"
         inputMode="numeric"

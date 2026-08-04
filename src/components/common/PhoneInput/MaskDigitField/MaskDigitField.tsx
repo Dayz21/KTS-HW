@@ -2,7 +2,7 @@ import React from 'react';
 
 import { DigitField } from '../DigitField';
 import { focusNextElement, focusPreviousElement } from '../focusTraversal';
-import { PhoneInputStatus } from '../types';
+import { PhoneInputStatus, PhoneInputStatusValue } from '../types';
 import { getMaskDigitCount, parseMaskParts } from '../utils';
 
 import s from './MaskDigitField.module.scss';
@@ -13,7 +13,7 @@ type MaskDigitFieldProps = {
   onDigitsChange: (digits: string[]) => void;
 
   disabled?: boolean;
-  status?: PhoneInputStatus;
+  status?: PhoneInputStatusValue;
 };
 
 export const MaskDigitField: React.FC<MaskDigitFieldProps> = ({
@@ -155,7 +155,7 @@ export const MaskDigitField: React.FC<MaskDigitFieldProps> = ({
             }}
             disabled={disabled}
             value={digits[part.index]}
-            ariaLabel={`Цифра ${part.index + 1}`}
+            ariaLabel={`Позиция ${part.index + 1} в номере`}
             onChange={(digit) => handleDigitInput(part.index, digit)}
             onPasteDigits={(pastedDigits) => handlePasteDigits(part.index, pastedDigits)}
             onKeyDown={(event) => handleKeyDown(part.index, event)}

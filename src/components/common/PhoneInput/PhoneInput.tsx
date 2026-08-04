@@ -60,12 +60,9 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
         )}
       </div>
 
-      {statusText && status !== PhoneInputStatus.DEFAULT && (
+      {statusText && status !== 'default' && (
         <div className={cn(s.statusText, s[status])}>
-          <Icon
-            type={status === PhoneInputStatus.SUCCESS ? IconType.success : IconType.error}
-            size={16}
-          />
+          <Icon type={status === 'success' ? IconType.success : IconType.error} size={16} />
           {statusText}
         </div>
       )}

@@ -30,6 +30,7 @@ const config: Linter.Config[] = tseslint.config(
       '*.config.ts',
       '*.config.mjs',
       '*.config.mts',
+      '*.config.cjs',
       '*-env.d.ts',
     ],
   },
