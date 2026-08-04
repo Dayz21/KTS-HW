@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import * as React from 'react';
 
-import { PhoneInput } from './PhoneInput';
+import PhoneInput from './PhoneInput';
 import { TEST_MASKS } from './__fixtures__/masks';
 import { PhoneInputProps, PhoneInputStatus } from './types';
 

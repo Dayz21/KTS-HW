@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 
-import { PhoneInput } from './PhoneInput';
+import PhoneInput from './PhoneInput';
 import { TEST_MASKS } from './__fixtures__/masks';
 import { PhoneInputProps, PhoneInputStatus } from './types';
 
