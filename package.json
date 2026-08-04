@@ -5,8 +5,8 @@
   "author": "KTS",
   "license": "MIT",
   "scripts": {
-    "rm-public": "rm -rf ./public",
-    "rm-source-maps": "find ./public -name *.js.map -type f -delete",
+    "rm-public": "node -e \"require('fs').rmSync('public',{recursive:true,force:true})\"",
+    "rm-source-maps": "node -e \"require('glob').globSync('public/**/*.js.map').forEach((f)=>require('fs').unlinkSync(f))\"",
     "dev": "vite --port 8080 --host",
     "build": "yarn rm-public && vite build && yarn run rm-source-maps",
     "preview": "vite preview --port 8080",
@@ -51,12 +51,7 @@
     ]
   },
   "dependencies": {
-    "@kts-specials/mediaproject-stores": "^4.2.1",
-    "@kts-specials/mediaproject-style": "^5.0.1",
-    "@kts-specials/mediaproject-utils": "^6.0.1",
-    "@sentry/react": "^8.9.2",
     "classnames": "^2.5.1",
-    "clsx": "^2.0.0",
     "eruda": "^3.0.1",
     "framer-motion": "^10.16.5",
     "mobx": "^6.11.0",
@@ -67,7 +62,6 @@
   "devDependencies": {
     "@commitlint/cli": "^17.7.1",
     "@commitlint/lint": "^18.5.0",
-    "@sentry/vite-plugin": "^2.19.0",
     "@stylistic/eslint-plugin": "^2.12.1",
     "@svgr/plugin-jsx": "^8.1.0",
     "@svgr/plugin-svgo": "^8.1.0",

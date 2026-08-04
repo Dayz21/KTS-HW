@@ -21,3 +21,5 @@ export type PhoneInputProps = {
   status?: PhoneInputStatus;
   statusText?: string;
 };
+
+export type MaskPart = { type: 'digit'; index: number } | { type: 'static'; value: string };

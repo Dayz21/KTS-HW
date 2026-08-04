@@ -2,6 +2,11 @@
 @use "sass:map";
 @use "sass:math";
 
-@import "@kts-specials/mediaproject-style/dist/mixins";
+@import "styles/animations";
 @import "styles/theme";
 @import "styles/typography";
+
+@mixin square($size) {
+  width: $size;
+  height: $size;
+}

@@ -1,7 +1,7 @@
-import { ValueModel } from '@kts-specials/mediaproject-stores';
 import { action, computed, makeObservable } from 'mobx';
 
 import { ILocalStore } from 'store/interfaces/ILocalStore';
+import { ValueModel } from 'store/models';
 
 import { PhoneMask } from '../types';
 import {

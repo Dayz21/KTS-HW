@@ -1,4 +1,10 @@
-import { PhoneMask } from './types';
+import { MaskPart, PhoneMask } from './types';
+
+const MASK_DIGIT_PLACEHOLDER = '*';
+
+const createEmptyDigits = (length: number): string[] => Array.from({ length }, () => '');
+
+const extractDigits = (value: string): string => value.replace(/\D/g, '');
 
 export const normalizePhoneNumber = (phone: string) => {
   return phone.replace(/[^0-9+]/g, '');
@@ -13,10 +19,8 @@ export const findMaskByPrefix = (masks: PhoneMask[], phone: string): PhoneMask |
     .sort((a, b) => b.prefix.length - a.prefix.length)[0];
 };
 
-export type MaskPart = { type: 'digit'; index: number } | { type: 'static'; value: string };
-
 export const getMaskDigitCount = (mask: string): number => {
-  return (mask.match(/\*/g) ?? []).length;
+  return [...mask].filter((char) => char === MASK_DIGIT_PLACEHOLDER).length;
 };
 
 export const parseMaskParts = (mask: string): MaskPart[] => {
@@ -25,7 +29,7 @@ export const parseMaskParts = (mask: string): MaskPart[] => {
   let position = 0;
 
   while (position < mask.length) {
-    if (mask[position] === '*') {
+    if (mask[position] === MASK_DIGIT_PLACEHOLDER) {
       parts.push({ type: 'digit', index: digitIndex });
       digitIndex += 1;
       position += 1;
@@ -34,7 +38,7 @@ export const parseMaskParts = (mask: string): MaskPart[] => {
 
     let staticValue = '';
 
-    while (position < mask.length && mask[position] !== '*') {
+    while (position < mask.length && mask[position] !== MASK_DIGIT_PLACEHOLDER) {
       staticValue += mask[position];
       position += 1;
     }
@@ -50,7 +54,7 @@ export const extractMaskDigits = (prefix: string, mask: string, value: string): 
   const parts = parseMaskParts(mask);
 
   if (!value.startsWith(prefix)) {
-    return Array.from({ length: digitCount }, () => '');
+    return createEmptyDigits(digitCount);
   }
 
   let valueIndex = prefix.length;
@@ -85,7 +89,7 @@ export const formatPhoneValue = (prefix: string, mask: string, digits: string[])
     if (part.type === 'static') {
       result += part.value;
     } else {
-      result += digits[digitIndex] || '*';
+      result += digits[digitIndex] || MASK_DIGIT_PLACEHOLDER;
       digitIndex += 1;
     }
   }
@@ -96,11 +100,7 @@ export const formatPhoneValue = (prefix: string, mask: string, digits: string[])
 export const formatPhoneTemplate = (prefix: string, mask: string): string => {
   const digitCount = getMaskDigitCount(mask);
 
-  return formatPhoneValue(
-    prefix,
-    mask,
-    Array.from({ length: digitCount }, () => ''),
-  );
+  return formatPhoneValue(prefix, mask, createEmptyDigits(digitCount));
 };
 
 export const hasMaskStructure = (prefix: string, value: string): boolean => {
@@ -108,7 +108,7 @@ export const hasMaskStructure = (prefix: string, value: string): boolean => {
     return false;
   }
 
-  if (value.includes('*')) {
+  if (value.includes(MASK_DIGIT_PLACEHOLDER)) {
     return true;
   }
 
@@ -139,10 +139,8 @@ export const normalizePhoneInput = (masks: PhoneMask[], phone: string): string =
     return formatPhoneValue(mask.prefix, mask.mask, digits);
   }
 
-  const normalized = normalizePhoneNumber(trimmed);
-  const withPlus = normalized.startsWith('+') ? normalized : `+${normalized}`;
-  const prefixDigits = normalizePhoneNumber(mask.prefix).replace(/^\+/, '');
-  const allDigits = withPlus.replace(/^\+/, '');
+  const prefixDigits = mask.prefix.slice(1);
+  const allDigits = extractDigits(trimmed);
   const maskDigitCount = getMaskDigitCount(mask.mask);
 
   const afterPrefix = allDigits.startsWith(prefixDigits)

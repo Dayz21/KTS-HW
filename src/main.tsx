@@ -1,11 +1,11 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
-import { fixActive } from '@kts-specials/mediaproject-utils';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { initSentry, initEruda } from 'utils/init';
+import { fixActive } from 'utils/fixActive';
+import { initEruda } from 'utils/init';
 
 import './styles/global.scss';
 
@@ -15,7 +15,6 @@ const startApp = () => {
   fixActive();
 
   initEruda(import.meta.env.DEV);
-  initSentry();
 
   createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

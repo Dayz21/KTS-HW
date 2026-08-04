@@ -1,6 +1,5 @@
 import path from 'path';
 
-import { sentryVitePlugin } from '@sentry/vite-plugin';
 import legacy from '@vitejs/plugin-legacy';
 import react from '@vitejs/plugin-react-swc';
 import autoprefixer from 'autoprefixer';
@@ -36,24 +35,14 @@ const getAliases = (): AliasOptions =>
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
-  const {
-    NODE_ENV = '',
-    CI_COMMIT_REF_SLUG = '',
-    CI_COMMIT_SHORT_SHA = '',
-    SENTRY_AUTH_TOKEN = '',
-    SENTRY_URL = '',
-    SENTRY_ORG = '',
-    SENTRY_PROJECT = '',
-  } = process.env;
+  const { NODE_ENV = '' } = process.env;
 
   const IS_PROD = NODE_ENV === 'production';
-
-  const IS_DEFAULT_BRANCH = new Set(['main', 'master']).has(CI_COMMIT_REF_SLUG);
 
   const { INJECT_FONTS_PRELOAD_LINKS, INJECT_FONTS_FACES } = buildFontsInject();
 
   return {
-    define: defineEnvVariables(['NODE_ENV', 'SENTRY_DSN', 'SENTRY_AUTH_TOKEN']),
+    define: defineEnvVariables(['NODE_ENV']),
     base: '/',
     publicDir: 'static',
     build: {
@@ -126,20 +115,6 @@ export default defineConfig(({ mode }) => {
           ? '> 0.2%, not dead, not op_mini all, not IE 11'
           : 'last 1 chrome version, last 1 firefox version, last 1 safari version',
       }),
-      SENTRY_AUTH_TOKEN &&
-        IS_DEFAULT_BRANCH &&
-        sentryVitePlugin({
-          url: SENTRY_URL,
-          authToken: SENTRY_AUTH_TOKEN,
-          org: SENTRY_ORG,
-          project: SENTRY_PROJECT,
-          release: {
-            name: CI_COMMIT_SHORT_SHA,
-          },
-          sourcemaps: {
-            ignore: ['node_modules', 'vite.config.mts'],
-          },
-        }),
     ],
   };
 });

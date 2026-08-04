@@ -1,4 +1,4 @@
-import cx from 'clsx';
+import cn from 'classnames';
 import * as React from 'react';
 
 import s from './Icon.module.scss';
@@ -17,7 +17,7 @@ const Icon: React.FC<IconProps> = ({
   return (
     <IconComponent
       {...svgProps}
-      className={cx(s.icon, className)}
+      className={cn(s.icon, className)}
       width={size}
       height={size}
       aria-hidden={ariaLabel ? undefined : true}

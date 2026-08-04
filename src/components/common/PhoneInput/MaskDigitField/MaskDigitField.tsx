@@ -5,7 +5,15 @@ import { PhoneInputStatus } from '../types';
 import { getMaskDigitCount, parseMaskParts } from '../utils';
 
 import s from './MaskDigitField.module.scss';
-import { MaskDigitFieldProps } from './types';
+
+type MaskDigitFieldProps = {
+  mask: string;
+  digits: string[];
+  onDigitsChange: (digits: string[]) => void;
+
+  disabled?: boolean;
+  status?: PhoneInputStatus;
+};
 
 export const MaskDigitField: React.FC<MaskDigitFieldProps> = ({
   mask,

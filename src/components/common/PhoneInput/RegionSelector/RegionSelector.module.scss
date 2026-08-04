@@ -1,5 +1,4 @@
 @import "styles/mixins";
-@import "styles/theme";
 
 .root {
   position: relative;
@@ -109,36 +108,4 @@
   &::-webkit-scrollbar-corner {
     background: transparent;
   }
-}
-
-.item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 6px 8px;
-  border: none;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  font-size: 12px;
-  @include animate(background-color);
-
-  &:hover,
-  &:focus-visible {
-    background-color: color-mix(in srgb, $input-bg-color 50%, $input-active-color 25%);
-    outline: none;
-  }
-}
-
-.itemName {
-  margin-left: 4px;
-  opacity: 0.5;
-}
-
-.flag {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
 }

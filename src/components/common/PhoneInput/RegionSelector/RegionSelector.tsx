@@ -5,12 +5,21 @@ import React from 'react';
 import { Icon, IconType } from 'components/common/Icon';
 import { useListbox } from 'hooks/useListbox';
 
-import { PhoneInputStatus } from '../types';
-import { getFlagEmojiUrl } from '../utils';
+import { FlagIcon } from '../FlagIcon';
+import { RegionItem } from '../RegionItem';
+import { PhoneInputStatus, PhoneMask } from '../types';
 
-import { RegionItem } from './RegionItem';
 import s from './RegionSelector.module.scss';
-import { RegionSelectorProps } from './types';
+import { dropdownListAnimation } from './animation';
+
+type RegionSelectorProps = {
+  masks: PhoneMask[];
+  selectedMask: PhoneMask | null;
+  onChange: (mask: PhoneMask) => void;
+
+  disabled?: boolean;
+  status?: PhoneInputStatus;
+};
 
 export const RegionSelector: React.FC<RegionSelectorProps> = ({
   masks,
@@ -55,14 +64,7 @@ export const RegionSelector: React.FC<RegionSelectorProps> = ({
       >
         {selectedMask && (
           <>
-            <img
-              className={s.flag}
-              src={getFlagEmojiUrl(selectedMask.key)}
-              alt={selectedMask.name}
-              width={20}
-              height={20}
-              draggable={false}
-            />
+            <FlagIcon mask={selectedMask} />
             {selectedMask.prefix}
           </>
         )}
@@ -73,10 +75,7 @@ export const RegionSelector: React.FC<RegionSelectorProps> = ({
         {isOpen && (
           <motion.div
             className={s.itemsContainer}
-            initial={{ opacity: 0, y: '110%' }}
-            animate={{ opacity: 1, y: '100%' }}
-            exit={{ opacity: 0, y: '110%' }}
-            transition={{ duration: 0.2 }}
+            {...dropdownListAnimation}
             role="listbox"
             aria-label="Выбор страны"
             onKeyDown={onListKeyDown}

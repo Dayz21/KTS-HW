@@ -1,3 +1,3 @@
-export { PhoneInput } from './PhoneInput';
+export { default as PhoneInput } from './PhoneInput';
 
 export type { PhoneMask } from './types';
