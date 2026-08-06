@@ -1,4 +1,3 @@
-import cn from 'classnames';
 import React from 'react';
 
 import { FlagIcon } from '../FlagIcon';
@@ -18,7 +17,7 @@ export const RegionItem = React.forwardRef<HTMLButtonElement, RegionItemProps>(
     return (
       <button
         ref={ref}
-        className={cn(s.root)}
+        className={s.root}
         type="button"
         role="option"
         aria-selected={isSelected}

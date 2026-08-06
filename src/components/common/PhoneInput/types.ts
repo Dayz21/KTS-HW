@@ -13,9 +13,10 @@ export enum PhoneInputStatus {
 
 export type PhoneInputProps = {
   masks: PhoneMask[];
-  value?: string;
-  onChange?: (value: string) => void;
+  initialValue?: string;
+  onChange: (value: string) => void;
 
+  label?: string;
   className?: string;
   disabled?: boolean;
   status?: PhoneInputStatus;

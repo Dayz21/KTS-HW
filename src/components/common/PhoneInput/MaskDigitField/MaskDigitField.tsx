@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { DigitField } from '../DigitField';
+import { focusNextElement, focusPreviousElement } from '../focusTraversal';
 import { PhoneInputStatus } from '../types';
 import { getMaskDigitCount, parseMaskParts } from '../utils';
 
@@ -98,6 +99,38 @@ export const MaskDigitField: React.FC<MaskDigitFieldProps> = ({
 
         nextDigits[index] = '';
         updateDigits(nextDigits);
+        break;
+      }
+
+      case 'Tab': {
+        const isFirst = index === 0;
+        const isLast = index === digitCount - 1;
+
+        if ((event.shiftKey && isFirst) || (!event.shiftKey && isLast)) {
+          event.preventDefault();
+
+          const target = event.currentTarget;
+
+          requestAnimationFrame(() => {
+            if (event.shiftKey) {
+              focusPreviousElement(target);
+            } else {
+              focusNextElement(target);
+            }
+          });
+        }
+
+        break;
+      }
+
+      case 'Enter': {
+        const form = event.currentTarget.form;
+
+        if (form) {
+          event.preventDefault();
+          form.requestSubmit();
+        }
+
         break;
       }
     }

@@ -14,7 +14,7 @@ import {
 
 export type PhoneInputStoreParams = {
   masks: PhoneMask[];
-  value?: string;
+  initialValue?: string;
   onChange?: (value: string) => void;
 };
 
@@ -23,10 +23,10 @@ export class PhoneInputStore implements ILocalStore {
   private readonly _onChange?: (value: string) => void;
   private readonly _value = new ValueModel<string>('');
 
-  constructor({ masks, value = '', onChange }: PhoneInputStoreParams) {
+  constructor({ masks, initialValue = '', onChange }: PhoneInputStoreParams) {
     this._masks = masks;
     this._onChange = onChange;
-    this._value.setValue(normalizePhoneInput(masks, value));
+    this._value.setValue(normalizePhoneInput(masks, initialValue));
 
     makeObservable(this, {
       masks: computed,
@@ -80,6 +80,10 @@ export class PhoneInputStore implements ILocalStore {
   };
 
   changeRegion = (mask: PhoneMask): void => {
+    if (mask.key === this.selectedMask?.key) {
+      return;
+    }
+
     this._emitChange(formatPhoneTemplate(mask.prefix, mask.mask));
   };
 

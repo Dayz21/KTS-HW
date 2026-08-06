@@ -91,6 +91,12 @@ export const useListbox = ({
     return () => document.removeEventListener('mousedown', handlePointerDown);
   }, [isOpen]);
 
+  React.useEffect(() => {
+    if (disabled && isOpen) {
+      close(false);
+    }
+  }, [disabled, isOpen, close]);
+
   const onTriggerKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLButtonElement>) => {
       switch (event.key) {

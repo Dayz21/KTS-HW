@@ -22,6 +22,8 @@ const config: Linter.Config[] = tseslint.config(
     ignores: [
       'dist/**',
       'public/**',
+      'storybook-static/**',
+      'coverage/**',
       '*.config.js',
       '*.config.ts',
       '*.config.mjs',

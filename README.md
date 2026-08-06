@@ -98,7 +98,7 @@ import { PhoneInput, PhoneInputStatus } from 'components/common/PhoneInput';
 
 <PhoneInput
   masks={MASKS}           // массив масок стран
-  value={phone}           // текущее значение (контролируемый режим)
+  initialValue={phone}    // начальное значение (опционально)
   onChange={setPhone}     // колбэк при изменении
   disabled={false}        // блокировка
   status={PhoneInputStatus.DEFAULT}

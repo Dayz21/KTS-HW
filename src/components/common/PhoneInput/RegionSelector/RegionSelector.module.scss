@@ -18,6 +18,14 @@
   font-size: 14px;
   @include animate(border-color);
 
+  &.error {
+    border-color: $input-error-color;
+  }
+
+  &.success {
+    border-color: $input-success-color;
+  }
+
   &.active,
   &:focus-visible,
   &:not(:disabled):hover {
@@ -27,15 +35,9 @@
 
   &:disabled {
     cursor: default;
-    opacity: 0.6;
-  }
-
-  &.error {
-    border-color: $input-error-color;
-  }
-
-  &.success {
-    border-color: $input-success-color;
+    background-color: $input-disabled-bg-color;
+    border-color: $input-disabled-border-color;
+    color: $input-disabled-color;
   }
 }
 

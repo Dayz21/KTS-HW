@@ -14,28 +14,24 @@ import { PhoneInputProps, PhoneInputStatus } from './types';
 
 const PhoneInput: React.FC<PhoneInputProps> = ({
   masks,
-  value,
+  initialValue,
   onChange,
+  label,
   className,
   disabled = false,
   status = PhoneInputStatus.DEFAULT,
   statusText,
 }) => {
   const phoneInputStore = useLocalStore(
-    () => new PhoneInputStore({ masks, value, onChange }),
+    () => new PhoneInputStore({ masks, initialValue, onChange }),
     [masks],
   );
-
-  React.useEffect(() => {
-    if (value !== undefined) {
-      phoneInputStore.syncValue(value);
-    }
-  }, [value, phoneInputStore]);
 
   const selectedMask = phoneInputStore.selectedMask;
 
   return (
     <div className={s.root}>
+      {label && <div className={s.label}>{label}</div>}
       <div className={cn(s.numberInput, className)}>
         <RegionSelector
           masks={phoneInputStore.masks}
