@@ -1,4 +1,3 @@
-import { useArgs } from '@storybook/core/preview-api';
 import type { Meta, StoryObj } from '@storybook/react';
 import * as React from 'react';
 
@@ -13,7 +12,8 @@ const meta: Meta<typeof PhoneInput> = {
   component: PhoneInput,
   args: {
     masks: TEST_MASKS,
-    value: '',
+    initialValue: '',
+    onChange: () => {},
   },
   argTypes: {
     masks: {
@@ -32,20 +32,11 @@ const meta: Meta<typeof PhoneInput> = {
       control: 'select',
       options: STATUS_OPTIONS,
     },
-    value: {
+    initialValue: {
       control: 'text',
     },
   },
-  render: function Render(args) {
-    const [, updateArgs] = useArgs();
-
-    const handleChange = (newValue: string) => {
-      args.onChange?.(newValue);
-      updateArgs({ value: newValue });
-    };
-
-    return <PhoneInput {...args} onChange={handleChange} />;
-  },
+  render: (args) => <PhoneInput key={args.initialValue} {...args} />,
 };
 
 export default meta;
@@ -57,13 +48,13 @@ export const Default: Story = {};
 export const Disabled: Story = {
   args: {
     disabled: true,
-    value: '+7',
+    initialValue: '+7',
   },
 };
 
 export const Success: Story = {
   args: {
-    value: '+71234567890',
+    initialValue: '+71234567890',
     status: PhoneInputStatus.SUCCESS,
     statusText: 'Номер телефона введен верно',
   },
@@ -71,7 +62,7 @@ export const Success: Story = {
 
 export const Error: Story = {
   args: {
-    value: '+71234567890',
+    initialValue: '+71234567890',
     status: PhoneInputStatus.ERROR,
     statusText: 'Неправильный номер телефона',
   },
@@ -79,6 +70,6 @@ export const Error: Story = {
 
 export const WithValue: Story = {
   args: {
-    value: '+71234567890',
+    initialValue: '+71234567890',
   },
 };

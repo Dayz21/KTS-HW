@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 
@@ -10,9 +10,16 @@ const getDigitFieldLabel = (position: number) => `Позиция ${position} в 
 
 const getDigitField = (position: number) => screen.getByLabelText(getDigitFieldLabel(position));
 
+const flushAnimationFrame = async () => {
+  await new Promise<void>((resolve) => {
+    requestAnimationFrame(() => resolve());
+  });
+};
+
 const renderPhoneInput = (props: Partial<PhoneInputProps> = {}) => {
   const defaultProps: PhoneInputProps = {
     masks: TEST_MASKS,
+    onChange: jest.fn(),
     ...props,
   };
 
@@ -79,7 +86,7 @@ describe('PhoneInput', () => {
 
   it('отображает текст статуса для success и error', () => {
     const { rerender } = renderPhoneInput({
-      value: '+71234567890',
+      initialValue: '+71234567890',
       status: PhoneInputStatus.SUCCESS,
       statusText: 'Номер телефона введен верно',
     });
@@ -89,7 +96,8 @@ describe('PhoneInput', () => {
     rerender(
       <PhoneInput
         masks={TEST_MASKS}
-        value="+71234567890"
+        initialValue="+71234567890"
+        onChange={jest.fn()}
         status={PhoneInputStatus.ERROR}
         statusText="Неправильный номер телефона"
       />,
@@ -108,37 +116,16 @@ describe('PhoneInput', () => {
   });
 
   it('блокирует ввод в disabled-состоянии', () => {
-    renderPhoneInput({ disabled: true, value: '+7' });
+    renderPhoneInput({ disabled: true, initialValue: '+7' });
 
     expect(screen.getByRole('button', { name: /\+7/ })).toBeDisabled();
     expect(getDigitField(1)).toBeDisabled();
   });
 
-  it('обновляет цифры при изменении контролируемого value', async () => {
-    const ControlledWrapper = () => {
-      const [value, setValue] = React.useState('+7(9**) ***-**-**');
-
-      return (
-        <>
-          <button type="button" onClick={() => setValue('+7(1**) ***-**-**')}>
-            Обновить
-          </button>
-          <PhoneInput masks={TEST_MASKS} value={value} />
-        </>
-      );
-    };
-
-    const user = userEvent.setup();
-
-    render(<ControlledWrapper />);
+  it('инициализирует цифры из initialValue', () => {
+    renderPhoneInput({ initialValue: '+7(9**) ***-**-**' });
 
     expect(getDigitField(1)).toHaveValue('9');
-
-    await user.click(screen.getByRole('button', { name: 'Обновить' }));
-
-    await waitFor(() => {
-      expect(getDigitField(1)).toHaveValue('1');
-    });
   });
 
   describe('клавиатурная навигация', () => {
@@ -167,6 +154,59 @@ describe('PhoneInput', () => {
       await user.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}{Enter}');
 
       expect(onChange).toHaveBeenCalledWith('+1(***) ***-****');
+    });
+
+    it('перемещает фокус Tab между дропдауном и полями цифр', async () => {
+      const { user } = renderPhoneInput();
+
+      const regionButton = screen.getByRole('button', { name: /\+7/ });
+      const digit1 = getDigitField(1);
+      const digit2 = getDigitField(2);
+
+      regionButton.focus();
+      await user.tab();
+
+      expect(digit1).toHaveFocus();
+
+      await user.tab();
+
+      expect(digit2).toHaveFocus();
+
+      await user.tab({ shift: true });
+
+      expect(digit1).toHaveFocus();
+
+      digit1.focus();
+      await user.keyboard('{Shift>}{Tab}{/Shift}');
+      await flushAnimationFrame();
+
+      expect(regionButton).toHaveFocus();
+    });
+
+    it('перемещает фокус Tab с последней цифры на дропдаун следующего телефона', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <>
+          <div data-testid="first-phone">
+            <PhoneInput masks={TEST_MASKS} onChange={jest.fn()} />
+          </div>
+          <div data-testid="second-phone">
+            <PhoneInput masks={TEST_MASKS} onChange={jest.fn()} />
+          </div>
+        </>,
+      );
+
+      const firstPhone = screen.getByTestId('first-phone');
+      const secondPhone = screen.getByTestId('second-phone');
+      const lastDigit = within(firstPhone).getByLabelText(getDigitFieldLabel(10));
+      const secondRegionButton = within(secondPhone).getByRole('button', { name: /\+7/ });
+
+      lastDigit.focus();
+      await user.tab();
+      await flushAnimationFrame();
+
+      expect(secondRegionButton).toHaveFocus();
     });
   });
 
@@ -224,6 +264,69 @@ describe('PhoneInput', () => {
       await user.paste('(912) 345-67-89');
 
       expect(onChange).toHaveBeenCalledWith('+7(912) 345-67-89');
+    });
+
+    it('отбрасывает префикс страны при вставке полного номера', async () => {
+      const onChange = jest.fn();
+      const { user } = renderPhoneInput({ onChange });
+
+      await user.click(getDigitField(1));
+      await user.paste('+7(912) 345-67-89');
+
+      expect(onChange).toHaveBeenCalledWith('+7(912) 345-67-89');
+      expect(getDigitField(1)).toHaveValue('9');
+      expect(getDigitField(2)).toHaveValue('1');
+    });
+
+    it('отбрасывает префикс +375 при вставке полного номера', async () => {
+      const onChange = jest.fn();
+      const { user } = renderPhoneInput({ onChange });
+
+      await user.click(getDigitField(1));
+      await user.paste('+375 29 123-45-67');
+
+      expect(screen.getByAltText('Беларусь')).toBeInTheDocument();
+      expect(onChange).toHaveBeenCalledWith('+37529 123-45-67');
+      expect(screen.getByLabelText('Позиция 1 в номере')).toHaveValue('2');
+      expect(screen.getByLabelText('Позиция 2 в номере')).toHaveValue('9');
+    });
+
+    it('отбрасывает префикс +1 при вставке полного номера', async () => {
+      const onChange = jest.fn();
+      const { user } = renderPhoneInput({ onChange });
+
+      await user.click(getDigitField(1));
+      await user.paste('+1(555) 123-4567');
+
+      expect(screen.getByAltText('США')).toBeInTheDocument();
+      expect(onChange).toHaveBeenCalledWith('+1(555) 123-4567');
+      expect(screen.getByLabelText('Позиция 1 в номере')).toHaveValue('5');
+      expect(screen.getByLabelText('Позиция 2 в номере')).toHaveValue('5');
+    });
+
+    it('сохраняет выбранный регион при вставке номера с тем же префиксом', async () => {
+      const onChange = jest.fn();
+      const { user } = renderPhoneInput({ onChange });
+
+      await user.click(screen.getByRole('button', { name: /Россия \+7/ }));
+      await user.click(await screen.findByRole('option', { name: /Казахстан/ }));
+
+      await user.click(screen.getByLabelText('Позиция 1 в номере'));
+      await user.paste('+7(700) 123-45-67');
+
+      expect(screen.getByAltText('Казахстан')).toBeInTheDocument();
+      expect(onChange).toHaveBeenCalledWith('+7(700) 123-45-67');
+    });
+
+    it('отбрасывает префикс с пробелами при вставке', async () => {
+      const onChange = jest.fn();
+      const { user } = renderPhoneInput({ onChange });
+
+      await user.click(getDigitField(1));
+      await user.paste('+ 7(912) 345-67-89');
+
+      expect(onChange).toHaveBeenCalledWith('+7(912) 345-67-89');
+      expect(getDigitField(1)).toHaveValue('9');
     });
   });
 });

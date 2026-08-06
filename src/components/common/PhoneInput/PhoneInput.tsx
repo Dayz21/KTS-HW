@@ -54,15 +54,19 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
             mask={selectedMask.mask}
             digits={phoneInputStore.digits}
             onDigitsChange={phoneInputStore.setDigits}
+            onPaste={phoneInputStore.pasteDigits}
             disabled={disabled}
             status={status}
           />
         )}
       </div>
 
-      {statusText && status !== 'default' && (
+      {statusText && status !== PhoneInputStatus.DEFAULT && (
         <div className={cn(s.statusText, s[status])}>
-          <Icon type={status === 'success' ? IconType.success : IconType.error} size={16} />
+          <Icon
+            type={status === PhoneInputStatus.SUCCESS ? IconType.success : IconType.error}
+            size={16}
+          />
           {statusText}
         </div>
       )}

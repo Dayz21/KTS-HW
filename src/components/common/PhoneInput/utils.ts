@@ -19,7 +19,7 @@ export const findMaskByPrefix = (masks: PhoneMask[], phone: string): PhoneMask |
     .sort((a, b) => b.prefix.length - a.prefix.length)[0];
 };
 
-const resolveMask = (
+export const resolveMask = (
   masks: PhoneMask[],
   lookupValue: string,
   preferredMaskKey?: string | null,
@@ -121,6 +121,70 @@ export const formatPhoneTemplate = (prefix: string, mask: string): string => {
   return formatPhoneValue(prefix, mask, createEmptyDigits(digitCount));
 };
 
+export const hasInternationalPrefix = (pastedText: string): boolean => {
+  const trimmed = pastedText.trim();
+
+  return trimmed.startsWith('+');
+};
+
+/** Определяет маску по вставленному номеру; при том же префиксе сохраняет текущий регион. */
+export const resolveMaskFromPaste = (
+  masks: PhoneMask[],
+  pastedText: string,
+  currentMaskKey?: string | null,
+): PhoneMask => {
+  const trimmed = pastedText.trim();
+  const normalizedPhone = normalizePhoneNumber(trimmed);
+  const lookupValue = normalizedPhone.startsWith('+') ? normalizedPhone : `+${normalizedPhone}`;
+  const detectedMask = findMaskByPrefix(masks, lookupValue);
+
+  if (!detectedMask || masks.length === 0) {
+    return resolveMask(masks, lookupValue, currentMaskKey);
+  }
+
+  if (!hasInternationalPrefix(trimmed)) {
+    return resolveMask(masks, lookupValue, currentMaskKey);
+  }
+
+  const currentMask = currentMaskKey
+    ? masks.find((mask) => mask.key === currentMaskKey)
+    : undefined;
+
+  if (currentMask?.prefix === detectedMask.prefix) {
+    return currentMask;
+  }
+
+  return detectedMask;
+};
+
+/** Извлекает цифры маски из вставленного текста, отбрасывая префикс страны. */
+export const extractPastedMaskDigits = (
+  prefix: string,
+  mask: string,
+  pastedText: string,
+): string => {
+  const trimmed = pastedText.trim();
+
+  if (!trimmed) {
+    return '';
+  }
+
+  const maskDigitCount = getMaskDigitCount(mask);
+  const allDigits = extractDigits(trimmed);
+  const prefixDigits = prefix.slice(1);
+  const normalizedPasted = normalizePhoneNumber(trimmed);
+
+  if (allDigits.startsWith(prefixDigits) && normalizedPasted.startsWith(prefix)) {
+    return allDigits.slice(prefixDigits.length, prefixDigits.length + maskDigitCount);
+  }
+
+  if (trimmed.startsWith(prefix) && hasMaskStructure(prefix, trimmed)) {
+    return extractMaskDigits(prefix, mask, trimmed).join('').slice(0, maskDigitCount);
+  }
+
+  return allDigits.slice(0, maskDigitCount);
+};
+
 export const hasMaskStructure = (prefix: string, value: string): boolean => {
   if (!value.startsWith(prefix)) {
     return false;
@@ -146,10 +210,11 @@ export const normalizePhoneInput = (
   }
 
   const trimmed = phone.trim();
-  const lookupValue = trimmed.startsWith('+') ? trimmed : `+${normalizePhoneNumber(trimmed)}`;
+  const normalizedPhone = normalizePhoneNumber(trimmed);
+  const lookupValue = normalizedPhone.startsWith('+') ? normalizedPhone : `+${normalizedPhone}`;
   const mask = resolveMask(masks, lookupValue, preferredMaskKey);
 
-  if (trimmed === mask.prefix) {
+  if (lookupValue === mask.prefix) {
     return formatPhoneTemplate(mask.prefix, mask.mask);
   }
 

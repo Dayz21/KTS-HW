@@ -6,10 +6,14 @@ import { ValueModel } from 'store/models';
 import { PhoneMask } from '../types';
 import {
   extractMaskDigits,
-  findMaskByPrefix,
+  extractPastedMaskDigits,
   formatPhoneTemplate,
   formatPhoneValue,
+  getMaskDigitCount,
+  hasInternationalPrefix,
   normalizePhoneInput,
+  resolveMask,
+  resolveMaskFromPaste,
 } from '../utils';
 
 export type PhoneInputStoreParams = {
@@ -39,6 +43,7 @@ export class PhoneInputStore implements ILocalStore {
       syncValue: action.bound,
       changeRegion: action.bound,
       setDigits: action.bound,
+      pasteDigits: action.bound,
     });
   }
 
@@ -61,17 +66,7 @@ export class PhoneInputStore implements ILocalStore {
       return this._masks.find((mask) => mask.key === this._selectedMaskKey.value) ?? this._masks[0];
     }
 
-    const matchingMasks = this._masks.filter((mask) => normalized.startsWith(mask.prefix));
-
-    if (this._selectedMaskKey.value) {
-      const preferred = matchingMasks.find((mask) => mask.key === this._selectedMaskKey.value);
-
-      if (preferred) {
-        return preferred;
-      }
-    }
-
-    return findMaskByPrefix(this._masks, normalized) ?? this._masks[0];
+    return resolveMask(this._masks, normalized, this._selectedMaskKey.value);
   }
 
   get digits(): string[] {
@@ -95,14 +90,11 @@ export class PhoneInputStore implements ILocalStore {
   };
 
   changeRegion = (mask: PhoneMask): void => {
-<<<<<<< HEAD
     if (mask.key === this.selectedMask?.key) {
       return;
     }
 
-=======
     this._selectedMaskKey.setValue(mask.key);
->>>>>>> 22a1fbe (fix: доработать тесты, Storybook и выбор региона с одинаковым префиксом)
     this._emitChange(formatPhoneTemplate(mask.prefix, mask.mask));
   };
 
@@ -114,6 +106,51 @@ export class PhoneInputStore implements ILocalStore {
     }
 
     this._emitChange(formatPhoneValue(mask.prefix, mask.mask, digits));
+  };
+
+  pasteDigits = (pastedText: string, startIndex: number): void => {
+    if (!pastedText.trim() || this._masks.length === 0) {
+      return;
+    }
+
+    const currentMask = this.selectedMask;
+
+    if (!currentMask) {
+      return;
+    }
+
+    const targetMask = resolveMaskFromPaste(this._masks, pastedText, this._selectedMaskKey.value);
+    const isInternationalPaste = hasInternationalPrefix(pastedText);
+    const maskSwitched = targetMask.key !== currentMask.key;
+    const pastedDigits = extractPastedMaskDigits(targetMask.prefix, targetMask.mask, pastedText);
+
+    if (!pastedDigits) {
+      return;
+    }
+
+    this._selectedMaskKey.setValue(targetMask.key);
+
+    const digitCount = getMaskDigitCount(targetMask.mask);
+
+    if (isInternationalPaste || maskSwitched) {
+      const digits = Array.from({ length: digitCount }, (_, index) => pastedDigits[index] ?? '');
+
+      this._emitChange(formatPhoneValue(targetMask.prefix, targetMask.mask, digits));
+
+      return;
+    }
+
+    const nextDigits = [...this.digits];
+
+    for (
+      let offset = 0;
+      offset < pastedDigits.length && startIndex + offset < digitCount;
+      offset += 1
+    ) {
+      nextDigits[startIndex + offset] = pastedDigits[offset];
+    }
+
+    this._emitChange(formatPhoneValue(targetMask.prefix, targetMask.mask, nextDigits));
   };
 
   destroy = (): void => {};
@@ -129,7 +166,7 @@ export class PhoneInputStore implements ILocalStore {
       return this._masks[0].key;
     }
 
-    return (findMaskByPrefix(this._masks, normalized) ?? this._masks[0]).key;
+    return resolveMask(this._masks, normalized).key;
   };
 
   private _syncSelectedMaskKey = (normalized: string): void => {
@@ -139,15 +176,14 @@ export class PhoneInputStore implements ILocalStore {
       return;
     }
 
-    const matchingMasks = this._masks.filter((mask) => normalized.startsWith(mask.prefix));
-    const preferredStillMatches =
-      this._selectedMaskKey.value &&
-      matchingMasks.some((mask) => mask.key === this._selectedMaskKey.value);
+    if (!normalized?.startsWith('+')) {
+      return;
+    }
 
-    if (!preferredStillMatches) {
-      this._selectedMaskKey.setValue(
-        (findMaskByPrefix(this._masks, normalized) ?? this._masks[0]).key,
-      );
+    const resolvedMask = resolveMask(this._masks, normalized, this._selectedMaskKey.value);
+
+    if (resolvedMask.key !== this._selectedMaskKey.value) {
+      this._selectedMaskKey.setValue(resolvedMask.key);
     }
   };
 

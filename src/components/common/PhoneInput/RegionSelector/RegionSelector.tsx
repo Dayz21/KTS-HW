@@ -7,7 +7,7 @@ import { useListbox } from 'hooks/useListbox';
 
 import { FlagIcon } from '../FlagIcon';
 import { RegionItem } from '../RegionItem';
-import { PhoneInputStatus, PhoneInputStatusValue, PhoneMask } from '../types';
+import { PhoneInputStatus, PhoneMask } from '../types';
 
 import s from './RegionSelector.module.scss';
 import { dropdownListAnimation } from './animation';
@@ -18,7 +18,7 @@ type RegionSelectorProps = {
   onChange: (mask: PhoneMask) => void;
 
   disabled?: boolean;
-  status?: PhoneInputStatusValue;
+  status?: PhoneInputStatus;
 };
 
 export const RegionSelector: React.FC<RegionSelectorProps> = ({
@@ -52,8 +52,8 @@ export const RegionSelector: React.FC<RegionSelectorProps> = ({
         ref={triggerRef}
         className={cn(s.selectedMask, {
           [s.active]: isOpen,
-          [s.error]: status === 'error',
-          [s.success]: status === 'success',
+          [s.error]: status === PhoneInputStatus.ERROR,
+          [s.success]: status === PhoneInputStatus.SUCCESS,
         })}
         type="button"
         disabled={disabled}

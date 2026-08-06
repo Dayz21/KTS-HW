@@ -1,18 +1,18 @@
 import cn from 'classnames';
 import React from 'react';
 
-import { PhoneInputStatus, PhoneInputStatusValue } from '../types';
+import { PhoneInputStatus } from '../types';
 
 import s from './DigitField.module.scss';
 
 type DigitFieldProps = {
   value: string;
   onChange: (value: string) => void;
-  onPasteDigits?: (digits: string) => void;
+  onPasteDigits?: (pastedText: string) => void;
   disabled?: boolean;
   ariaLabel?: string;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  status?: PhoneInputStatusValue;
+  status?: PhoneInputStatus;
 };
 
 export const DigitField = React.forwardRef<HTMLInputElement, DigitFieldProps>(
@@ -39,22 +39,22 @@ export const DigitField = React.forwardRef<HTMLInputElement, DigitFieldProps>(
         return;
       }
 
-      const pastedDigits = event.clipboardData.getData('text').replace(/\D/g, '');
+      const pastedText = event.clipboardData.getData('text');
 
-      if (!pastedDigits) {
+      if (!pastedText.replace(/\D/g, '')) {
         return;
       }
 
       event.preventDefault();
-      onPasteDigits(pastedDigits);
+      onPasteDigits(pastedText);
     };
 
     return (
       <input
         ref={ref}
         className={cn(s.root, {
-          [s.error]: status === 'error',
-          [s.success]: status === 'success',
+          [s.error]: status === PhoneInputStatus.ERROR,
+          [s.success]: status === PhoneInputStatus.SUCCESS,
         })}
         type="text"
         inputMode="numeric"
