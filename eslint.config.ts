@@ -12,6 +12,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 import TsParser from '@typescript-eslint/parser';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
+import jestPlugin from 'eslint-plugin-jest';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,12 +23,14 @@ const config: Linter.Config[] = tseslint.config(
     ignores: [
       'dist/**',
       'public/**',
+      '.storybook/**',
       'storybook-static/**',
       'coverage/**',
       '*.config.js',
       '*.config.ts',
       '*.config.mjs',
       '*.config.mts',
+      '*.config.cjs',
       '*-env.d.ts',
     ],
   },
@@ -335,6 +338,26 @@ const config: Linter.Config[] = tseslint.config(
           format: ['camelCase'],
         },
       ],
+    },
+  },
+
+  // Jest test files
+  {
+    files: ['**/*.{test,spec}.{ts,tsx}', 'src/test/**/*.{ts,tsx}'],
+    plugins: {
+      jest: jestPlugin,
+    },
+    languageOptions: {
+      globals: jestPlugin.environments.globals.globals,
+    },
+    rules: {
+      ...jestPlugin.configs['flat/recommended'].rules,
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/naming-convention': 'off',
     },
   },
 

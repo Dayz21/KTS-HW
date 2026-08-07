@@ -2,9 +2,9 @@
 node_modules/ 
 public/ 
 dist/ 
+*.local 
 storybook-static/
 coverage/
-*.local 
 .idea/ 
 .vscode/ 
 .DS_Store 

@@ -22,11 +22,8 @@ const PreviewPage: React.FC = () => {
 
   const handleValidationPhoneChange = (value: string) => {
     setValidationPhone(value);
-
-    if (validationStatus !== PhoneInputStatus.DEFAULT) {
-      setValidationStatus(PhoneInputStatus.DEFAULT);
-      setValidationStatusText(undefined);
-    }
+    setValidationStatus(PhoneInputStatus.DEFAULT);
+    setValidationStatusText(undefined);
   };
 
   const handleValidationSubmit = (event: React.FormEvent<HTMLFormElement>) => {

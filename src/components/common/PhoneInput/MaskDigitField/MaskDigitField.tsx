@@ -11,6 +11,7 @@ type MaskDigitFieldProps = {
   mask: string;
   digits: string[];
   onDigitsChange: (digits: string[]) => void;
+  onPaste: (pastedText: string, startIndex: number) => void;
 
   disabled?: boolean;
   status?: PhoneInputStatus;
@@ -20,6 +21,7 @@ export const MaskDigitField: React.FC<MaskDigitFieldProps> = ({
   mask,
   digits,
   onDigitsChange,
+  onPaste,
   disabled = false,
   status = PhoneInputStatus.DEFAULT,
 }) => {
@@ -47,15 +49,17 @@ export const MaskDigitField: React.FC<MaskDigitFieldProps> = ({
     }
   };
 
-  const handlePasteDigits = (index: number, pastedDigits: string) => {
-    const nextDigits = [...digits];
+  const handlePasteDigits = (index: number, pastedText: string) => {
+    onPaste(pastedText, index);
 
-    for (let offset = 0; offset < pastedDigits.length && index + offset < digitCount; offset += 1) {
-      nextDigits[index + offset] = pastedDigits[offset];
-    }
+    requestAnimationFrame(() => {
+      const lastFilledIndex = inputRefs.current.reduce(
+        (lastIndex, input, inputIndex) => (input?.value ? inputIndex : lastIndex),
+        index,
+      );
 
-    updateDigits(nextDigits);
-    focusDigit(Math.min(index + pastedDigits.length, digitCount - 1));
+      focusDigit(lastFilledIndex);
+    });
   };
 
   const handleKeyDown = (index: number, event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -155,7 +159,7 @@ export const MaskDigitField: React.FC<MaskDigitFieldProps> = ({
             }}
             disabled={disabled}
             value={digits[part.index]}
-            ariaLabel={`Цифра ${part.index + 1}`}
+            ariaLabel={`Позиция ${part.index + 1} в номере`}
             onChange={(digit) => handleDigitInput(part.index, digit)}
             onPasteDigits={(pastedDigits) => handlePasteDigits(part.index, pastedDigits)}
             onKeyDown={(event) => handleKeyDown(part.index, event)}

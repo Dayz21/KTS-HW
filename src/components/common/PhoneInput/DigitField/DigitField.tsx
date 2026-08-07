@@ -8,7 +8,7 @@ import s from './DigitField.module.scss';
 type DigitFieldProps = {
   value: string;
   onChange: (value: string) => void;
-  onPasteDigits?: (digits: string) => void;
+  onPasteDigits?: (pastedText: string) => void;
   disabled?: boolean;
   ariaLabel?: string;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -39,14 +39,14 @@ export const DigitField = React.forwardRef<HTMLInputElement, DigitFieldProps>(
         return;
       }
 
-      const pastedDigits = event.clipboardData.getData('text').replace(/\D/g, '');
+      const pastedText = event.clipboardData.getData('text');
 
-      if (!pastedDigits) {
+      if (!pastedText.replace(/\D/g, '')) {
         return;
       }
 
       event.preventDefault();
-      onPasteDigits(pastedDigits);
+      onPasteDigits(pastedText);
     };
 
     return (

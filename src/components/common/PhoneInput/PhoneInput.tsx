@@ -22,8 +22,17 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   status = PhoneInputStatus.DEFAULT,
   statusText,
 }) => {
+  const onChangeRef = React.useRef(onChange);
+
+  onChangeRef.current = onChange;
+
   const phoneInputStore = useLocalStore(
-    () => new PhoneInputStore({ masks, initialValue, onChange }),
+    () =>
+      new PhoneInputStore({
+        masks,
+        initialValue,
+        onChange: (value) => onChangeRef.current(value),
+      }),
     [masks],
   );
 
@@ -45,6 +54,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
             mask={selectedMask.mask}
             digits={phoneInputStore.digits}
             onDigitsChange={phoneInputStore.setDigits}
+            onPaste={phoneInputStore.pasteDigits}
             disabled={disabled}
             status={status}
           />
