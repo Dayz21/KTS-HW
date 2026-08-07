@@ -20,6 +20,7 @@ const config: StorybookConfig = {
   },
   async viteFinal(viteConfig) {
     return mergeConfig(viteConfig, {
+      base: process.env.STORYBOOK_BASE_PATH || '/',
       plugins: [
         svgr({
           svgrOptions: {

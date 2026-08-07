@@ -1,5 +1,7 @@
 # Домашнее задание: форма ввода телефона
 
+[![CI](https://github.com/Dayz21/KTS-HW/actions/workflows/ci.yml/badge.svg)](https://github.com/Dayz21/KTS-HW/actions/workflows/ci.yml)
+
 Реализация компонента `PhoneInput` — маскированного поля ввода номера телефона с выбором страны, поддержкой клавиатуры и состояний валидации.
 
 ## Быстрый старт
@@ -40,6 +42,28 @@ yarn test           # запуск Jest-тестов
 yarn test:watch     # тесты в watch-режиме
 yarn storybook      # Storybook на http://localhost:6006
 ```
+
+### Docker
+
+```bash
+# Сборка образа
+docker build -t kts-hw .
+
+# Запуск контейнера
+docker run -p 8080:80 kts-hw
+```
+
+После запуска приложение будет доступно по адресу: **http://localhost:8080**
+
+### CI/CD
+
+При пуше в репозиторий GitHub Actions автоматически:
+- запускает Jest-тесты и проверку TypeScript;
+- собирает production-версию приложения;
+- проверяет сборку Docker-образа;
+- деплоит Storybook на GitHub Pages (только при пуше в `main`).
+
+Для деплоя Storybook необходимо включить GitHub Pages: **Settings → Pages → Source: GitHub Actions**.
 
 ---
 
@@ -155,6 +179,8 @@ yarn storybook
 ```
 
 Доступны варианты: `Default`, `Disabled`, `Success`, `Error`, `WithValue`.
+
+Опубликованная версия: **https://dayz21.github.io/KTS-HW/**
 
 ---
 
