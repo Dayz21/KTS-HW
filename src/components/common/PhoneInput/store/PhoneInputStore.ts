@@ -31,7 +31,6 @@ export class PhoneInputStore implements ILocalStore {
   constructor({ masks, initialValue = '', onChange }: PhoneInputStoreParams) {
     this._masks = masks;
     this._onChange = onChange;
-    this._value.setValue(normalizePhoneInput(masks, initialValue));
     this._selectedMaskKey.setValue(this._resolveInitialMaskKey(initialValue));
     this._value.setValue(normalizePhoneInput(masks, initialValue, this._selectedMaskKey.value));
 
