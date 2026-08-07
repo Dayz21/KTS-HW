@@ -1,0 +1,12 @@
+@use "sass:meta";
+@use "sass:map";
+@use "sass:math";
+
+@import "styles/animations";
+@import "styles/theme";
+@import "styles/typography";
+
+@mixin square($size) {
+  width: $size;
+  height: $size;
+}

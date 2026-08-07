@@ -1,0 +1,17 @@
+@use "sass:color";
+
+$color-black: #000;
+$color-white: #fff;
+
+$input-bg-color: #fff;
+$input-border-color: #c2c9d1;
+$input-active-color: #3e66fb;
+
+$input-error-color: #f03738;
+$input-success-color: #3cc13b;
+
+$input-disabled-bg-color: color-mix(in srgb, #fff 75%, #c2c9d1);
+$input-disabled-border-color: color-mix(in srgb, #fff 50%, #c2c9d1);
+$input-disabled-color: #00000080;
+
+$scrollbar-thumb-color: #c4c4c4;

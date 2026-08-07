@@ -1,0 +1,113 @@
+@import "styles/mixins";
+
+.root {
+  position: relative;
+}
+
+.selectedMask {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px 10px;
+  background-color: $input-bg-color;
+  border-radius: 8px;
+  border: 1px solid $input-border-color;
+  font: inherit;
+  color: inherit;
+  font-size: 14px;
+  @include animate(border-color);
+
+  &.error {
+    border-color: $input-error-color;
+  }
+
+  &.success {
+    border-color: $input-success-color;
+  }
+
+  &.active,
+  &:focus-visible,
+  &:not(:disabled):hover {
+    border-color: $input-active-color;
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: default;
+    background-color: $input-disabled-bg-color;
+    border-color: $input-disabled-border-color;
+    color: $input-disabled-color;
+  }
+}
+
+.itemsContainer {
+  max-height: 200px;
+  width: 210px;
+  z-index: 10;
+  overflow: hidden;
+  position: absolute;
+  bottom: -10px;
+  transform: translateY(100%);
+  left: 0;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  background-color: $input-bg-color;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 4px;
+    width: 1px;
+    background-color: rgba($scrollbar-thumb-color, 0.2);
+    pointer-events: none;
+  }
+}
+
+.items {
+  max-height: 200px;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  @supports (-moz-appearance: none) {
+    scrollbar-width: thin;
+    scrollbar-color: $scrollbar-thumb-color transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-button,
+  &::-webkit-scrollbar-button:single-button,
+  &::-webkit-scrollbar-button:start,
+  &::-webkit-scrollbar-button:end,
+  &::-webkit-scrollbar-button:vertical:start:decrement,
+  &::-webkit-scrollbar-button:vertical:start:increment,
+  &::-webkit-scrollbar-button:vertical:end:decrement,
+  &::-webkit-scrollbar-button:vertical:end:increment {
+    display: none;
+    width: 0;
+    height: 0;
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-track {
+    margin-block: 10px;
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $scrollbar-thumb-color;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}

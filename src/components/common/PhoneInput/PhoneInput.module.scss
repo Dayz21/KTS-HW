@@ -1,0 +1,31 @@
+@import "styles/mixins";
+
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.statusText {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  color: rgba($color-black, 0.5);
+  font-size: 12px;
+}
+
+.numberInput {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  width: fit-content;
+}
+
+.label {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  color: $color-black;
+}

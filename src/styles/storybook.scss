@@ -1,0 +1,19 @@
+@import "styles/theme";
+@import "styles/typography";
+
+* {
+  font-family: $font-primary;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  background: $color-white;
+  color: $color-black;
+}
+
+input,
+textarea {
+  user-select: text;
+}

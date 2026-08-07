@@ -1,0 +1,12 @@
+*.log 
+node_modules/ 
+public/ 
+dist/ 
+*.local 
+storybook-static/
+coverage/
+.idea/ 
+.vscode/ 
+.DS_Store 
+.swc/ 
+circular-deps.*

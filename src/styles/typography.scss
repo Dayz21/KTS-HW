@@ -1,0 +1,11 @@
+// Конфиг шрифтов задан в файле tools/fonts/config.ts и используется в vite для встраивания в index.html
+$font-primary: "SF Pro Display", sans-serif;
+
+/// Задает основной шрифт: **SF Pro Display**
+///
+/// @param {number} $weight
+///   Допустимые значения 400, 500, 600, 700
+@mixin font-primary($weight: 400) {
+  font-family: $font-primary;
+  font-weight: $weight;
+}
